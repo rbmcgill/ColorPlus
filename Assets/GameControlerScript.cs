@@ -115,9 +115,9 @@ public class GameControlerScript : MonoBehaviour {
 	void KeyPressed (int x, int y) {
 
 		if (Input.GetKey(KeyCode.Keypad1)) {
-			//choose random white cube in row 1 and chenge it to the color of the nextcube right now
+			//set my color to the coloe of the current cube
 			Color myColor = fieldCubes [x, y].GetComponent<Renderer> ().material.color;
-			
+			//choose random white cube in row 1 and change it to the color of the nextcube right now, destroy the next cube
 			if (myColor == Color.white){
 				fieldCubes [Random.Range(fieldWidth,1), 1].GetComponent<Renderer>().material.color = ChooseColor[nextCubeColor];
 				Destroy (nextCubePrefab);
@@ -125,8 +125,7 @@ public class GameControlerScript : MonoBehaviour {
 			print ("Key pressed:" + 1);
 		}
 		else if (Input.GetKey(KeyCode.Keypad2)) {
-			//choose random column in row 2 
-			// of the white cubes in the row (Random.Range(0, fieldwidth), 2, 0)
+			//choose random white cube in row 2 and change it to the color of the nextcube right now, destroy the next cube
 			Color myColor = fieldCubes [x, y].GetComponent<Renderer> ().material.color;
 			
 			if (myColor == Color.white){
@@ -136,19 +135,17 @@ public class GameControlerScript : MonoBehaviour {
 			print ("Key pressed:" + 2);
 		}
 		else if (Input.GetKey(KeyCode.Keypad3)) {
-			//choose random column in row 3 
-			// of the white cubes in the row (Random.Range(0, fieldwidth), 3, 0)
+			//choose random white cube in row 3 and change it to the color of the nextcube right now, destroy the next cube
 			Color myColor = fieldCubes [x, y].GetComponent<Renderer> ().material.color;
 			
 			if (myColor == Color.white){
 				fieldCubes [Random.Range(fieldWidth,3), 3].GetComponent<Renderer>().material.color = ChooseColor[nextCubeColor];
 				Destroy (nextCubePrefab);
-			}
+			//}
 			print ("Key pressed:" + 3);
 		}
 		else if (Input.GetKey(KeyCode.Keypad4)) {
-			//choose random column in row 4
-			// of the white cubes in the row (Random.Range(0, fieldwidth), 4, 0)
+			//choose random white cube in row 4 and change it to the color of the nextcube right now, destroy the next cube
 			Color myColor = fieldCubes [x, y].GetComponent<Renderer> ().material.color;
 			
 			if (myColor == Color.white){
@@ -158,8 +155,7 @@ public class GameControlerScript : MonoBehaviour {
 			print ("Key pressed:" + 4);
 		}
 		else if (Input.GetKey(KeyCode.Keypad5)) {
-			//choose random column in row 5 
-			// of the white cubes in the row (Random.Range(0, fieldwidth), 5, 0)
+			//choose random white cube in row 5 and change it to the color of the nextcube right now, destroy the next cube
 			Color myColor = fieldCubes [x, y].GetComponent<Renderer> ().material.color;
 			
 			if (myColor == Color.white){
@@ -168,8 +164,10 @@ public class GameControlerScript : MonoBehaviour {
 			}
 			print ("Key pressed:" + 5);
 		}
-		//isKeyPressed = true;
+		isKeyPressed = true;
+		isNextCubeAvailable = false;
 	}
+
 
 
 
@@ -225,19 +223,20 @@ public class GameControlerScript : MonoBehaviour {
 	void Update () {
 
 		//ProcessClickedCube
-
+		KeyPressed (x, y);
 
 		if(Time.time >= turnStart){
 		//instantiate that nextCube with the color changing
 			//parenthesis game object makes new thing into an object
 			GameObject nextCube = (GameObject)Instantiate (nextCubePrefab, new Vector3 (7, 10, 0), Quaternion.identity);
 			nextCube.GetComponent<Renderer> ().material.color = ChooseColor[nextCubeColor];
+
+			isNextCubeAvailable= true;
 			isKeyPressed = false;
 
-			if(isNextCubeAvailable == true && isKeyPressed == false){
+			/*if(isNextCubeAvailable == true && isKeyPressed == false){
 				//call that key press and movement
-				KeyPressed (x, y);
-				print ("A key have been pressed.");
+				KeyPressed (x,y);
 				//set new cube to next cube color 
 					//if (iswhitecube == true &&)
 				//disappear the current next cube until the next turn
@@ -246,9 +245,10 @@ public class GameControlerScript : MonoBehaviour {
 				isNextCubeAvailable = false;
 				isKeyPressed = true;
 				print ("Next cube has been used.");
-			}
+			}*/
+
 			//if after all this time at the end of the turn there is still no key pressed, turn a cube black
-			else if (Time.time > turnStart && isKeyPressed == false){
+			if (Time.time > turnStart && isKeyPressed == false){
 				fieldCubes[Random.Range(0,fieldWidth),Random.Range(0,fieldHeight)].GetComponent<Renderer>().material.color = Color.black;
 				print ("Screw you I'm a black cube!");
 			}
