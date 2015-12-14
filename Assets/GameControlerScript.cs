@@ -26,6 +26,8 @@ public class GameControlerScript : MonoBehaviour {
 	bool iswhiteCube;
 	bool isblackCube;
 
+
+	//Choose from array and set that color to "nextCubeColor"
 	static Color[]ChooseColor = {
 		Color.blue,
 		Color.green,
@@ -33,25 +35,47 @@ public class GameControlerScript : MonoBehaviour {
 		Color.yellow,
 		Color.magenta
 	};
-	//Choose from array and set that color to "nextCubeColor"
 
 
-	public void ProcessClickedCube (GameObject clickedCube, int x, int y) {
-		print (x + ", " + y);
-		clickedCube.GetComponent<Renderer> ().material.color = Color.gray;
-		/*if (active == true) {
-			//when click on (x--,y--)(x,y--)(x++,y--)(x--,y)(x++,y)(x--,y++)(x,y++)(x++,y++)
-			//when clicked on x and y, set the active cube to inactive
-		}
-		if (active == false) {
-		}*/
+	int xMoveDir, yMoveDir;
+	void SetMoveDirection (int x, int y) {
+		xMoveDir = x;
+		yMoveDir = y;
 	}
+	
+	void MoveCube () {
+		x += xMoveDir;
+		y += yMoveDir;
+		xMoveDir = 0;
+		yMoveDir = 0;
+	}
+
+	void ProcessClickedCube (GameObject clickedCube, int x, int y) {
+		print (x + ", " + y);
+
+		if (isActive == false) {
+			isActive = true;
+			activeCubeColor = clickedCube.GetComponent<Renderer> ().material.color;
+			//set that cube to center of grid and only allow to movement to squares around it
+			//(x--,y--)(x,y--)(x++,y--)(x--,y)(x++,y)(x--,y++)(x,y++)(x++,y++)
+			if (clickedCube (1 >= xMoveDir >= 0, 1>= yMoveDir >= 0)){
+				//move in that direction
+			}
+			else {
+			}
+		}
+
+		if (isActive == true) {
+			isActive = false;
+		}
+	}
+
 
 	void OnMouseDown (){
 		ProcessClickedCube (this.gameObject, x, y);
 	}
 
-	bool CheckForSamePlus (int x, int y){
+	bool IsSameColorPlus (int x, int y){
 		//set myColor equal to the color of whatever the current fieldCube is
 		Color myColor = fieldCubes [x, y].GetComponent<Renderer> ().material.color;
 
@@ -63,11 +87,6 @@ public class GameControlerScript : MonoBehaviour {
 		}*/
 		return false;
 	
-	}
-
-	bool CheckForMultiPlus (Color myColor){
-		//set myColor equal to the color of whatever the current fieldCube is
-		return false;
 	}
 
 	int MyColorValue (Color myColor){
@@ -112,11 +131,9 @@ public class GameControlerScript : MonoBehaviour {
 
 
 
-	void KeyPressed (int x, int y) {
+	void KeyPressed () {
 
 		if (Input.GetKey(KeyCode.Keypad1)) {
-			//set my color to the coloe of the current cube
-			Color myColor = fieldCubes [x, y].GetComponent<Renderer> ().material.color;
 			//choose random white cube in row 1 and change it to the color of the nextcube right now, destroy the next cube
 			if (myColor == Color.white){
 				fieldCubes [Random.Range(fieldWidth,1), 1].GetComponent<Renderer>().material.color = ChooseColor[nextCubeColor];
@@ -126,8 +143,6 @@ public class GameControlerScript : MonoBehaviour {
 		}
 		else if (Input.GetKey(KeyCode.Keypad2)) {
 			//choose random white cube in row 2 and change it to the color of the nextcube right now, destroy the next cube
-			Color myColor = fieldCubes [x, y].GetComponent<Renderer> ().material.color;
-			
 			if (myColor == Color.white){
 				fieldCubes [Random.Range(fieldWidth,2), 2].GetComponent<Renderer>().material.color = ChooseColor[nextCubeColor];
 				Destroy (nextCubePrefab);
@@ -136,8 +151,6 @@ public class GameControlerScript : MonoBehaviour {
 		}
 		else if (Input.GetKey(KeyCode.Keypad3)) {
 			//choose random white cube in row 3 and change it to the color of the nextcube right now, destroy the next cube
-			Color myColor = fieldCubes [x, y].GetComponent<Renderer> ().material.color;
-			
 			if (myColor == Color.white){
 				fieldCubes [Random.Range(fieldWidth,3), 3].GetComponent<Renderer>().material.color = ChooseColor[nextCubeColor];
 				Destroy (nextCubePrefab);
@@ -146,8 +159,6 @@ public class GameControlerScript : MonoBehaviour {
 		}
 		else if (Input.GetKey(KeyCode.Keypad4)) {
 			//choose random white cube in row 4 and change it to the color of the nextcube right now, destroy the next cube
-			Color myColor = fieldCubes [x, y].GetComponent<Renderer> ().material.color;
-			
 			if (myColor == Color.white){
 				fieldCubes [Random.Range(fieldWidth,4), 4].GetComponent<Renderer>().material.color = ChooseColor[nextCubeColor];
 				Destroy (nextCubePrefab);
@@ -156,8 +167,6 @@ public class GameControlerScript : MonoBehaviour {
 		}
 		else if (Input.GetKey(KeyCode.Keypad5)) {
 			//choose random white cube in row 5 and change it to the color of the nextcube right now, destroy the next cube
-			Color myColor = fieldCubes [x, y].GetComponent<Renderer> ().material.color;
-			
 			if (myColor == Color.white){
 				fieldCubes [Random.Range(fieldWidth,5), 5].GetComponent<Renderer>().material.color = ChooseColor[nextCubeColor];
 				Destroy(nextCubePrefab);
@@ -167,27 +176,6 @@ public class GameControlerScript : MonoBehaviour {
 		isKeyPressed = true;
 		isNextCubeAvailable = false;
 	}
-
-
-
-
-	void CheckMultiColorPlus(int x, int y) {
-		//check if x,y == one color from ChooseColor
-		//then are (x,y++),(x--,y),(x++,y), and (x,y--) all of the other colors from the array with no overlapping
-		//maybe make a checklist for it to go through and check if they all have different RBG numbers
-	}
-	void CheckSingleColorPlus(int x, int y) {
-		//check if x,y == one color from ChooseColor
-		//then are (x,y++),(x--,y),(x++,y), and (x,y--) the same color (check for the same RBG number)
-	}
-
-	public void RandomColumn (int x, int y, int fieldWidth){
-	//search for what cubes are white like if material.color == white within that y
-		//then, randomly between those cubes change the color to that of the nextCube (change in x)
-	}
-
-
-
 
 
 
@@ -221,9 +209,20 @@ public class GameControlerScript : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+		//check if there are any scorable pluses
+		IsSameColorPlus ();
+		IsMultiColorPlus ();
+
+		if (IsSameColorPlus == true){
+			score += sameColorScore;
+		}
+		if (IsMultiColorPlus == true) {
+			score += multiColorScore;
+		}
 
 		//ProcessClickedCube
-		KeyPressed (x, y);
+		//make sure keys register
+		KeyPressed ();
 
 		if(Time.time >= turnStart){
 		//instantiate that nextCube with the color changing
