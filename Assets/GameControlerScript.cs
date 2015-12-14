@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class GameControlerScript : MonoBehaviour {
-
+	
 	public GameObject cube;
 	public GameObject[,] fieldCubes;
 	public GameObject nextCubePrefab;
@@ -10,6 +10,9 @@ public class GameControlerScript : MonoBehaviour {
 
 	int fieldWidth = 8;
 	int fieldHeight = 5;
+	int sameColorScore = 10;
+	int multiColorScore = 5;
+	int noKey = -1; //make sure to subtract the 1
 	int score = 0;
 	int nextCubeColor;
 
@@ -48,16 +51,74 @@ public class GameControlerScript : MonoBehaviour {
 		ProcessClickedCube (this.gameObject, x, y);
 	}
 
+	bool CheckForSamePlus (int x, int y){
+		//set myColor equal to the color of whatever the current fieldCube is
+		Color myColor = fieldCubes [x, y].GetComponent<Renderer> ().material.color;
+
+		if (myColor == Color.white || myColor == Color.black){
+			return false;
+		}
+
+		/*if (){
+		}*/
+		return false;
+	
+	}
+
+	bool CheckForMultiPlus (Color myColor){
+		//set myColor equal to the color of whatever the current fieldCube is
+		return false;
+	}
+
+	int MyColorValue (Color myColor){
+
+		//check what the color of that cube is and set it a number value for some sick math later
+		if (myColor == Color.red){
+			return 1;
+		}
+		if (myColor == Color.blue){
+			return 10;
+		}
+		if (myColor == Color.yellow){
+			return 100;
+		}
+		if (myColor == Color.green){
+			return 1000;
+		}
+		if (myColor == Color.magenta){
+			return 10000;
+		}
+		//screw every other color
+		return 0;
+	}
+
+	bool IsMultiColorPlus (int x, int y){
+		int myTotalColor = 0;
+		//the total equals the current total plus this new color value at this location, then checking the values of cubes around it
+		myTotalColor += MyColorValue (fieldCubes[x,y].GetComponent<Renderer>().material.color);
+
+
+
+
+		if (myTotalColor == 11111){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+
 
 	void KeyPressed () {
 
 		if (Input.GetKey(KeyCode.Keypad1)) {
 			//choose random white cube in row 1 and chenge it to the color of the nextcube right now
-			if (fieldCubes[0,fieldHeight].GetComponent<Renderer>().material.color = Color.white){
-				fieldCubes [0, Random.Range(0,fieldHeight)]().material.color = ChooseColor[nextCubeColor];
+			/*if (){
+				fieldCubes [0, Random.Range(0,fieldWidth)].GetComponent<Renderer>().material.color = ChooseColor[nextCubeColor];
 				//turn nextCube color gray
-				nextCubePrefab.GetComponent<Renderer>().material.color = Color.gray;
-			}
+				Destroy (nextCubePrefab);
+			}*/
 
 			print ("Key pressed:" + 1);
 		}
@@ -145,11 +206,12 @@ public class GameControlerScript : MonoBehaviour {
 
 		if(Time.time >= turnStart){
 		//instantiate that nextCube with the color changing
-			Instantiate (nextCubePrefab, new Vector3 (7, 10, 0), Quaternion.identity);
-			nextCubePrefab.GetComponent<Renderer> ().material.color = ChooseColor[nextCubeColor];
+			//parenthesis game object makes new thing into an object
+			GameObject nextCube = (GameObject)Instantiate (nextCubePrefab, new Vector3 (7, 10, 0), Quaternion.identity);
+			nextCube.GetComponent<Renderer> ().material.color = ChooseColor[nextCubeColor];
 			isKeyPressed = false;
 
-			if(isNextCubeAvailable == true && isKeyPressed == false /* && KeyPressed() */){
+			if(isNextCubeAvailable == true && isKeyPressed == false){
 				//call that key press and movement
 				KeyPressed();
 				//set new cube to next cube color 
@@ -159,16 +221,22 @@ public class GameControlerScript : MonoBehaviour {
 				//set once white cube to not white anymore  isWhiteCube = false;
 				isNextCubeAvailable = false;
 			}
-			else if(isNextCubeAvailable == false && isKeyPressed == true /* && KeyPressed() */) {
+			//if after all this time at the end of the turn there is still no key pressed, turn a cube black
+			else if (Time.time > turnStart && isKeyPressed == false){
+				fieldCubes[Random.Range(0,fieldWidth),Random.Range(0,fieldHeight)].GetComponent<Renderer>().material.color = Color.black;
+				print ("Screw you I'm a black cube!");
 			}
+
 			else {
+			}
 				//Instantiate (fieldCubes, new Vector3 (Random.Range(0,fieldWidth), Random.Range(0,fieldHeight),0), Quaternion.identity);
 
 
 				//set this cube to iswhitecube=false and isblackcube=true
-			}
+
 
 			turnStart += turnLength;
+			isKeyPressed = false;
 			print ("End turn");
 		}
 
